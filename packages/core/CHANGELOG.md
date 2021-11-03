@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/mgrsskls/miyagi/compare/core/v2.6.4...core/v2.7.0) (2021-11-03)
+
+
+### Features
+
+* **core:** support dir attribute on html element for components (not miyagi itself) ([50652ef](https://github.com/mgrsskls/miyagi/commit/50652ef04affa853cb1e52a94eaedcd3bd6ee9d1))
+
 ### [2.6.4](https://github.com/mgrsskls/miyagi/compare/core/v2.6.3...core/v2.6.4) (2021-10-05)
 
 
