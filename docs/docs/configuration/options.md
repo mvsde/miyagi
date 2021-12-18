@@ -9,7 +9,7 @@ _Settings for assets that miyagi serves (independently from your components)._
 default: `""`<br>
 type: `string|object`
 
-This settings can be helpful if assets are located in another folder, e.g. `public/assets`, but they should actually be served from `assets/`. In that case you could set this option to `public`.
+This setting can be helpful if assets are located in another folder, e.g. `public/assets`, but they should actually be served from `assets/`. In that case you could set this option to `public`.
 
 It is also possible to define this for each `NODE_ENV` via an object like this:
 
@@ -240,6 +240,17 @@ default:
 }
 ```
 
+### `info`
+
+default:
+
+```json
+{
+  "extension": "json",
+  "name": "info"
+}
+```
+
 ### `js`
 
 default:
@@ -288,6 +299,11 @@ default:
 
 _**Note:** You can use `"<component>"` for `name` if the file should have the same name as the component folder._
 
+## `extensions`
+
+default: `[]`<br>
+type: `array`
+
 ## `projectName`
 
 default: `"miyagi"`<br>
@@ -295,7 +311,7 @@ type: `string`
 
 ## `ui`
 
-_Settings for the [web UI](/web-ui/overview)._
+_Settings for the [web UI](/the-ui)._
 
 ### `reload`
 
@@ -374,14 +390,14 @@ default:
       "colorHeadline2": "hsl(0, 0%, 100%)"
     }
   },
-  "css": "", // string of CSS which gets added to miyagi and components. can be used to changed the styling of miyagi or e.g. add custom fonts defined in `fontFamily`,
-  "js": "" // string of JS which gets added to components
+  "css": null, // string of CSS which gets added to miyagi and components. can be used to changed the styling of miyagi or e.g. add custom fonts defined in `fontFamily`,
+  "js": null // string of JS which gets added to components
 }
 ```
 
 ### `validations`
 
-[Read more about validations](/web-ui/variation#validations) in the Web UI section.
+[Read more about validations](/the-ui/#validations) in the Web UI section.
 
 #### `accessibility`
 

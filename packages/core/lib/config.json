@@ -3,10 +3,6 @@
     "assets": {
       "root": "",
       "css": [],
-      "es6Modules": false,
-      "js": [],
-      "folder": [],
-      "manifest": null,
       "customProperties": {
         "files": [],
         "prefixes": {
@@ -14,7 +10,11 @@
           "color": "color",
           "spacing": "spacing"
         }
-      }
+      },
+      "es6Modules": false,
+      "folder": [],
+      "js": [],
+      "manifest": null
     },
     "build": {
       "basePath": "/",
@@ -22,8 +22,6 @@
       "outputFile": false
     },
     "components": {
-      "textDirection": "ltr",
-      "lang": "en",
       "folder": "src",
       "ignores": [
         "node_modules",
@@ -33,13 +31,17 @@
         ".miyagi.js",
         ".miyagi.json"
       ],
+      "lang": "en",
       "renderInIframe": {
         "default": false,
         "except": []
-      }
+      },
+      "textDirection": "ltr"
     },
     "engine": {
-      "name": null
+      "instance": null,
+      "name": null,
+      "options": {}
     },
     "files": {
       "css": {
@@ -77,9 +79,16 @@
       "reloadAfterChanges": {
         "componentAssets": false
       },
+      "textDirection": "ltr",
       "theme": {
+        "css": null,
+        "favicon": null,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+        "js": null,
+        "logo": null,
         "mode": "light",
         "light": {
+          "logo": null,
           "navigation": {
             "colorText": "var(--Miyagi-color-Text-internal)",
             "colorBackground": "var(--Miyagi-color-Background-internal)",
@@ -98,6 +107,7 @@
           }
         },
         "dark": {
+          "logo": null,
           "navigation": {
             "colorText": "var(--Miyagi-color-Text-internal)",
             "colorBackground": "var(--Miyagi-color-Background-internal)",
@@ -117,10 +127,9 @@
         }
       },
       "validations": {
-        "html": true,
-        "accessibility": true
-      },
-      "textDirection": "ltr"
+        "accessibility": true,
+        "html": true
+      }
     },
     "schema": {}
   },
