@@ -53,7 +53,6 @@ export default async function setState(app, methods) {
         new Promise((resolve) => {
           getFileContents(app).then((data) => {
             state.fileContents = data;
-
             setSourceTreeAndMenu(app, methods, state).then(resolve);
           });
         })

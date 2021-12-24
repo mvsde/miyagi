@@ -6,6 +6,7 @@ import config from "../../../lib/miyagi-config.js";
 import build from "../../../lib/build";
 import render from "../../../lib/render/index";
 
+jest.mock("../../../lib/__dirname.js", () => `${process.cwd()}/lib`);
 jest.mock("../../../lib/logger");
 
 jest.mock("fs", () => ({

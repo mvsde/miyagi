@@ -23,6 +23,7 @@ jest.mock("../../../lib/init/view-helpers.js");
 jest.mock("../../../lib/init/views.js");
 jest.mock("../../../lib/init/watcher.js");
 jest.mock("../../../lib/state");
+jest.mock("../../../lib/__dirname.js", () => `${process.cwd()}/lib`);
 jest.mock("handlebars");
 jest.mock("handlebars-layouts");
 

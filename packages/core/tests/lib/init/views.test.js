@@ -4,6 +4,8 @@ import deepMerge from "deepmerge";
 import setViews from "../../../lib/init/views.js";
 import config from "../../../lib/miyagi-config.js";
 
+jest.mock("../../../lib/__dirname.js", () => `${process.cwd()}/lib`);
+
 beforeEach(() => {
   jest.resetModules();
   jest.resetAllMocks();

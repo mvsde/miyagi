@@ -6,11 +6,8 @@
 
 import path from "path";
 import express from "express";
-import { fileURLToPath } from "url";
 import config from "../miyagi-config.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import __dirname from "../__dirname.js";
 
 /**
  * @param {object} app - the express instance
@@ -117,7 +114,7 @@ function registerAssetFolder(app) {
 
   app.use(
     `/${config.projectName}`,
-    express.static(path.join(__dirname, `../../${assetFolder}`))
+    express.static(path.join(__dirname, `../${assetFolder}`))
   );
 }
 

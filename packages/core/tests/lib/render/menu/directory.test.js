@@ -7,16 +7,8 @@ const helpersSrc = "../../../../lib/render/menu/helpers.js";
  * @param componentName
  * @param mock
  */
-async function requireComponent(componentName, mock) {
-  let component = await import(
-    `../../../../lib/render/menu/${componentName}.js`
-  );
-
-  if (mock) {
-    component.render = jest.fn(() => `${componentName}Html`);
-  }
-
-  return component;
+async function requireComponent(componentName) {
+  return await import(`../../../../lib/render/menu/${componentName}.js`);
 }
 
 beforeEach(() => {
@@ -64,14 +56,22 @@ describe("lib/menu/elements/directory", () => {
   describe("has directory as child and is not in the first level", () => {
     describe("when expanded", () => {
       test("calls toggle.render with the correct params", async () => {
-        const directory = await requireComponent("directory");
-        const toggle = await requireComponent("toggle", true);
-        const helpers = require(helpersSrc);
+        jest.mock(helpersSrc, () => {
+          return {
+            childrenOfDirectoryContainDirectory: jest.fn(() => true),
+            directoryIsNotTopLevel: jest.fn(() => true),
+            pathIsParentOfOrEqualRequestedPath: jest.fn(() => true),
+          };
+        });
 
-        helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-        helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-        helpers.directoryIsNotTopLevel = jest.fn(() => true);
-        helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => true);
+        jest.mock("../../../../lib/render/menu/toggle.js", () => {
+          return {
+            render: jest.fn(() => "toggleHtml"),
+          };
+        });
+
+        const directory = await requireComponent("directory");
+        const toggle = await import("../../../../lib/render/menu/toggle.js");
 
         directory.render(app, directoryObject, request);
 
@@ -85,14 +85,22 @@ describe("lib/menu/elements/directory", () => {
 
     describe("when not expanded", () => {
       test("calls toggle.render with the correct params", async () => {
-        const directory = await requireComponent("directory");
-        const toggle = await requireComponent("toggle", true);
-        const helpers = require(helpersSrc);
+        jest.mock(helpersSrc, () => {
+          return {
+            childrenOfDirectoryContainDirectory: jest.fn(() => true),
+            directoryIsNotTopLevel: jest.fn(() => true),
+            pathIsParentOfOrEqualRequestedPath: jest.fn(() => false),
+          };
+        });
 
-        helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-        helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-        helpers.directoryIsNotTopLevel = jest.fn(() => true);
-        helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => false);
+        jest.mock("../../../../lib/render/menu/toggle.js", () => {
+          return {
+            render: jest.fn(() => "toggleHtml"),
+          };
+        });
+
+        const directory = await requireComponent("directory");
+        const toggle = await import("../../../../lib/render/menu/toggle.js");
 
         directory.render(app, directoryObject, request);
 
@@ -105,13 +113,27 @@ describe("lib/menu/elements/directory", () => {
     });
 
     test("adds the toggle html to the return value", async () => {
-      const directory = await requireComponent("directory");
-      await requireComponent("toggle", true);
+      jest.mock(helpersSrc, () => {
+        return {
+          childrenOfDirectoryContainDirectory: jest.fn(() => true),
+          directoryIsNotTopLevel: jest.fn(() => true),
+          pathIsParentOfOrEqualRequestedPath: jest.fn(() => true),
+        };
+      });
 
-      const helpers = require(helpersSrc);
-      helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-      helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
-      helpers.directoryIsNotTopLevel = jest.fn(() => true);
+      jest.mock("../../../../lib/render/menu/toggle.js", () => {
+        return {
+          render: jest.fn(() => "toggleHtml"),
+        };
+      });
+
+      const directory = await requireComponent("directory");
+
+      jest.mock("../../../../lib/render/menu/toggle.js", () => {
+        return {
+          render: jest.fn(() => "toggleHtml"),
+        };
+      });
 
       expect(
         directory.render(app, directoryObject, request).indexOf("toggleHtml")

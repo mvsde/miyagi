@@ -94,10 +94,11 @@
     "release": "standard-version -t core/v"
   },
   "jest": {
-    "collectCoverage": true,
+    "collectCoverage": false,
     "collectCoverageFrom": [
       "lib/**/*.js",
-      "index.js"
+      "index.js",
+      "!lib/__dirname.js"
     ],
     "testEnvironment": "jsdom",
     "transform": {

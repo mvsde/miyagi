@@ -6,14 +6,11 @@
 
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import handlebars from "handlebars";
 import log from "../logger.js";
 import { getShortPathFromFullPath } from "../helpers.js";
 import config, { messages } from "../miyagi-config.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import __dirname from "../__dirname.js";
 
 /**
  * @param {string} shortPath - relative template file path based from components folder
@@ -54,7 +51,7 @@ async function registerLayouts() {
             layout,
             path.join(
               __dirname,
-              `../../${config.folders.views}/layouts/${layout}.hbs`
+              `../${config.folders.views}/layouts/${layout}.hbs`
             )
           ).then(resolve);
         })

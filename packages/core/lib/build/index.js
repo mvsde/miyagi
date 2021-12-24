@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+
 import {
   normalizeString,
   getDataPathFromTemplatePath,
@@ -10,9 +10,6 @@ import {
 import render from "../render/index.js";
 import log from "../logger.js";
 import appConfig, { messages } from "../miyagi-config.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /**
  * Module for creating a static build
@@ -246,7 +243,7 @@ export default (app) => {
     function buildDistDirectory(buildFolder) {
       return new Promise((resolve) =>
         fs.cp(
-          path.join(__dirname, "../../dist/"),
+          "../../dist/",
           `${buildFolder}/miyagi/`,
           {
             recursive: true,

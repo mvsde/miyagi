@@ -3,6 +3,7 @@ import request from "supertest";
 import deepMerge from "deepmerge";
 import config from "../../../lib/miyagi-config.js";
 import setStatic from "../../../lib/init/static.js";
+jest.mock("../../../lib/__dirname.js", () => `${process.cwd()}/lib`);
 
 let app;
 let server;

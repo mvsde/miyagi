@@ -2,30 +2,52 @@ const helpersSrc = "../../../../lib/render/menu/helpers.js";
 
 /**
  * @param componentName
- * @param mock
  */
-async function requireComponent(componentName, mock) {
-  let component = await import(`../../../../lib/render/menu/${componentName}`);
-
-  if (mock) {
-    component.render = jest.fn(() => `${componentName}Html`);
-  }
-
-  return component;
+async function requireComponent(componentName) {
+  return await import(`../../../../lib/render/menu/${componentName}.js`);
 }
 
 beforeEach(() => {
   jest.resetModules();
+  jest.clearAllMocks();
   jest.resetAllMocks();
+  jest.restoreAllMocks();
 });
 
 describe("lib/menu/elements/menu-item", () => {
-  const app = "app";
+  const app = {
+    get: () => ({
+      isBuild: false,
+    }),
+  };
   const id = "id";
 
   test("calls listItem.render with the correct params", async () => {
+    jest.doMock(helpersSrc, () => {
+      return {
+        __esModule: true,
+        default: {
+          childrenOfDirectoryContainDirectory: jest.fn(() => true),
+          directoryHasComponent: jest.fn(() => true),
+          componentHasVariations: jest.fn(() => true),
+        },
+      };
+    });
+    jest.doMock("../../../../lib/render/menu/component.js", () => {
+      return {
+        __esModule: true,
+        render: jest.fn(),
+      };
+    });
+    jest.doMock("../../../../lib/render/menu/list-item.js", () => {
+      return {
+        __esModule: true,
+        render: jest.fn(),
+      };
+    });
+
     const renderMenuItem = await requireComponent("menu-item");
-    const renderListItem = await requireComponent("list-item", true);
+    const renderListItem = await requireComponent("list-item");
     const dirObject = {};
 
     renderMenuItem.render(dirObject);
@@ -45,23 +67,57 @@ describe("lib/menu/elements/menu-item", () => {
     };
 
     test("calls renderMenu with the correct params", async () => {
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            childrenOfDirectoryContainDirectory: jest.fn(() => true),
+            directoryHasComponent: jest.fn(() => true),
+            componentHasVariations: jest.fn(() => true),
+            pathIsParentOfOrEqualRequestedPath: jest.fn(() => true),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/index.js", () => {
+        return {
+          __esModule: true,
+          render: jest.fn(),
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/variations.js", () => {
+        return { __esModule: true, render: jest.fn() };
+      });
+      jest.dontMock("../../../../lib/render/menu/component.js");
+
       const renderMenuItem = await requireComponent("menu-item");
-      const renderMenu = await requireComponent("index", true);
+      const { render } = await requireComponent("index");
 
       renderMenuItem.render(directoryObject, request, app);
 
-      expect(renderMenu.render).toHaveBeenCalledWith(
-        app,
-        children,
-        request,
-        index
-      );
+      expect(render).toHaveBeenCalledWith(app, children, request, index);
     });
 
     test("adds the menu html to the return value", async () => {
-      const renderMenuItem = await requireComponent("menu-item");
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            childrenOfDirectoryContainDirectory: jest.fn(() => true),
+            directoryHasComponent: jest.fn(() => true),
+            componentHasVariations: jest.fn(() => true),
+            pathIsParentOfOrEqualRequestedPath: jest.fn(() => true),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/index.js", () => {
+        return {
+          __esModule: true,
+          render: jest.fn(() => "indexHtml"),
+        };
+      });
+      jest.dontMock("../../../../lib/render/menu/list-item.js");
 
-      await requireComponent("index", true);
+      const renderMenuItem = await requireComponent("menu-item");
 
       expect(
         renderMenuItem
@@ -76,10 +132,19 @@ describe("lib/menu/elements/menu-item", () => {
     const directoryObject = {};
 
     test("calls component.render with the correct params", async () => {
-      const helpers = require(helpersSrc);
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            directoryHasComponent: jest.fn(() => true),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/component.js", () => {
+        return { __esModule: true, render: jest.fn() };
+      });
       const renderMenuItem = await requireComponent("menu-item");
-      const renderComponent = await requireComponent("component", true);
-      helpers.directoryHasComponent = jest.fn(() => true);
+      const renderComponent = await requireComponent("component");
 
       renderMenuItem.render(directoryObject, request, app);
 
@@ -91,11 +156,21 @@ describe("lib/menu/elements/menu-item", () => {
     });
 
     test("adds the menuItem html to the return value", async () => {
-      const helpers = require(helpersSrc);
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            directoryHasComponent: jest.fn(() => true),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/component.js", () => {
+        return {
+          __esModule: true,
+          render: jest.fn(() => "componentHtml"),
+        };
+      });
       const renderMenuItem = await requireComponent("menu-item");
-      helpers.directoryHasComponent = jest.fn(() => true);
-
-      await requireComponent("component", true);
 
       expect(
         renderMenuItem
@@ -106,15 +181,34 @@ describe("lib/menu/elements/menu-item", () => {
   });
 
   describe("item isn't a component", () => {
-    const helpers = require(helpersSrc);
+    jest.doMock(helpersSrc, () => {
+      return {
+        __esModule: true,
+        directoryHasComponent: jest.fn(() => false),
+      };
+    });
+
     const request = "request";
     const directoryObject = {};
 
-    helpers.directoryHasComponent = jest.fn(() => false);
-
     test("calls directory.render with the correct params", async () => {
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            directoryHasComponent: jest.fn(() => false),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/directory.js", () => {
+        return {
+          __esModule: true,
+          render: jest.fn(),
+        };
+      });
+
       const renderMenuItem = await requireComponent("menu-item");
-      const renderDirectory = await requireComponent("directory", true);
+      const renderDirectory = await requireComponent("directory");
 
       renderMenuItem.render(directoryObject, request, app);
 
@@ -126,9 +220,28 @@ describe("lib/menu/elements/menu-item", () => {
     });
 
     test("adds the menuItem html to the return value", async () => {
-      const renderMenuItem = await requireComponent("menu-item");
+      jest.doMock(helpersSrc, () => {
+        return {
+          __esModule: true,
+          default: {
+            directoryHasComponent: jest.fn(() => false),
+          },
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/directory.js", () => {
+        return {
+          __esModule: true,
+          render: jest.fn(() => "directoryHtml"),
+        };
+      });
+      jest.doMock("../../../../lib/render/menu/variations.js", () => {
+        return {
+          __esModule: true,
+        };
+      });
+      jest.dontMock("../../../../lib/render/menu/list-item.js");
 
-      await requireComponent("directory", true);
+      const renderMenuItem = await requireComponent("menu-item");
 
       expect(
         renderMenuItem
