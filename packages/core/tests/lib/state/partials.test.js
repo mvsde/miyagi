@@ -1,5 +1,5 @@
-const deepMerge = require("deepmerge");
-const config = require("../../../lib/config.json");
+import deepMerge from "deepmerge";
+import config from "../../../lib/miyagi-config.js";
 
 beforeEach(() => {
   jest.resetModules();

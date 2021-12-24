@@ -1,11 +1,9 @@
-const init = require("../lib");
-const { getVariationData, resolveVariationData } = require("../lib/mocks");
-const renderIframeVariation = require("../lib/render/views/iframe/variation.js");
-const {
-  getTemplateFilePathFromDirectoryPath,
-} = require("../lib/render/helpers");
+import init from "../lib";
+import { getVariationData, resolveVariationData } from "../lib/mocks/index.js";
+import renderIframeVariation from "../lib/render/views/iframe/variation.js";
+import { getTemplateFilePathFromDirectoryPath } from "../lib/render/helpers.js";
 
-module.exports = function Api() {
+export default function Api() {
   process.env.MIYAGI_JS_API = true;
 
   return new Promise((resolve) => {
@@ -45,7 +43,7 @@ module.exports = function Api() {
       });
     });
   });
-};
+}
 
 function createElementFromHTML(html) {
   const div = document.createElement("div");

@@ -1,56 +1,49 @@
-let express;
-let getPartials;
-let getFileContents;
-let getMenu;
-let getSourceTree;
-let setState;
+import express from "express";
+import { getPartials } from "../../../lib/state/partials.js";
+import { getFileContents } from "../../../lib/state/file-contents.js";
+import { getMenu } from "../../../lib/state/menu/index.js";
+import { getSourceTree } from "../../../lib/state/source-tree.js";
+import setState from "../../../lib/state/index.js";
+import config from "../../../lib/miyagi-config.js";
 
-const config = require("../../../lib/config.json");
-
-beforeEach(() => {
-  express = require("express");
-  /* eslint-disable */
-  getPartials = require("../../../lib/state/partials.js").getPartials;
-  getFileContents =
-    require("../../../lib/state/file-contents.js").getFileContents;
-  getMenu = require("../../../lib/state/menu/index.js").getMenu;
-  getSourceTree = require("../../../lib/state/source-tree.js").getSourceTree;
-  /* eslint-enable */
-  setState = require("../../../lib/state");
-
-  jest.mock("../../../lib/state/partials.js", () => {
-    return {
-      getPartials: jest.fn(() => {
-        return new Promise((resolve) => resolve([]));
-      }),
-    };
-  });
-  jest.mock("../../../lib/state/file-contents.js", () => {
-    return {
-      getFileContents: jest.fn(() => {
-        return new Promise((resolve) => resolve("data"));
-      }),
-    };
-  });
-  jest.mock("../../../lib/state/menu/index.js", () => {
-    return {
-      getMenu: jest.fn(() => {
-        return "menu";
-      }),
-    };
-  });
-  jest.mock("../../../lib/state/flat-menu.js", () => {
-    return jest.fn(() => {
+jest.mock("../../../lib/state/partials.js", () => {
+  return {
+    __esModule: true,
+    getPartials: jest.fn(() => {
+      return new Promise((resolve) => resolve([]));
+    }),
+  };
+});
+jest.mock("../../../lib/state/file-contents.js", () => {
+  return {
+    getFileContents: jest.fn(() => {
+      return new Promise((resolve) => resolve("data"));
+    }),
+  };
+});
+jest.mock("../../../lib/state/menu/index.js", () => {
+  return {
+    __esModule: true,
+    getMenu: jest.fn(() => {
+      return "menu";
+    }),
+  };
+});
+jest.mock("../../../lib/state/flat-menu.js", () => {
+  return {
+    __esModule: true,
+    default: jest.fn(() => {
       return [];
-    });
-  });
-  jest.mock("../../../lib/state/source-tree.js", () => {
-    return {
-      getSourceTree: jest.fn(() => {
-        return "sourceTree";
-      }),
-    };
-  });
+    }),
+  };
+});
+jest.mock("../../../lib/state/source-tree.js", () => {
+  return {
+    __esModule: true,
+    getSourceTree: jest.fn(() => {
+      return "sourceTree";
+    }),
+  };
 });
 
 afterEach(() => {

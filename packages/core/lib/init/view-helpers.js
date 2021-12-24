@@ -4,8 +4,8 @@
  * @module initViewhelpers
  */
 
-const handlebars = require("handlebars");
-const menu = require("../render/menu");
+import handlebars from "handlebars";
+import { render as renderMenu } from "../render/menu/index.js";
 
 /**
  * Returns the menu html
@@ -16,7 +16,7 @@ const menu = require("../render/menu");
  * @returns {string} the menu html
  */
 function getMenuHtml(children, path, variation) {
-  return menu.render(this, children, { path, variation }, 0);
+  return renderMenu(this, children, { path, variation }, 0);
 }
 
 /**
@@ -56,7 +56,7 @@ function getJsFilesHtml(files) {
   return html;
 }
 
-module.exports = function initViewHelpers(app) {
+export default function initViewHelpers(app) {
   const { assets } = app.get("config");
 
   handlebars.registerHelper("menu", getMenuHtml.bind(app));
@@ -78,4 +78,4 @@ module.exports = function initViewHelpers(app) {
   handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
-};
+}

@@ -1,9 +1,18 @@
-const fs = require("fs");
-const path = require("path");
-const helpers = require("../helpers.js");
-const render = require("../render/index.js");
-const log = require("../logger.js");
-const appConfig = require("../config.json");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import {
+  normalizeString,
+  getDataPathFromTemplatePath,
+  getFullPathFromShortPath,
+  removeInternalKeys,
+} from "../helpers.js";
+import render from "../render/index.js";
+import log from "../logger.js";
+import appConfig, { messages } from "../miyagi-config.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Module for creating a static build
@@ -11,7 +20,7 @@ const appConfig = require("../config.json");
  * @module build
  * @param {object} app - the express instance
  */
-module.exports = (app) => {
+export default (app) => {
   return new Promise((resolve, reject) => {
     const config = { ...app.get("config") };
     const { build } = config;
@@ -144,17 +153,17 @@ module.exports = (app) => {
           .then(async () => {
             if (app.get("config").build.outputFile) {
               await createJsonOutputFile(paths, () => {
-                log("success", appConfig.messages.buildDone);
+                log("success", messages.buildDone);
                 resolve();
               });
             } else {
-              log("success", appConfig.messages.buildDone);
+              log("success", messages.buildDone);
               resolve();
             }
           })
           .catch((err) => {
             console.log(err);
-            log("error", appConfig.messages.buildFailed);
+            log("error", messages.buildFailed);
             reject();
           });
       });
@@ -297,7 +306,9 @@ module.exports = (app) => {
       const cssJsFiles = [
         ...new Set([
           ...assetsConfig.css.map((file) => path.join(assetsConfig.root, file)),
-          ...assetsConfig.js.map((file) => path.join(assetsConfig.root, file)),
+          ...assetsConfig.js.map((file) =>
+            path.join(assetsConfig.root, file.src)
+          ),
           ...assetsConfig.customProperties.files.map((file) =>
             path.join(assetsConfig.root, file)
           ),
@@ -458,7 +469,7 @@ module.exports = (app) => {
           promises.push(
             new Promise((resolve, reject) => {
               const fileName = path.resolve(
-                `${buildFolder}/component-${normalizedFileName}-variation-${helpers.normalizeString(
+                `${buildFolder}/component-${normalizedFileName}-variation-${normalizeString(
                   variation
                 )}${embedded ? "-embedded" : ""}.html`
               );
@@ -521,7 +532,7 @@ module.exports = (app) => {
                 } else {
                   fs.writeFile(
                     path.resolve(
-                      `${buildFolder}/show-${normalizedFileName}-variation-${helpers.normalizeString(
+                      `${buildFolder}/show-${normalizedFileName}-variation-${normalizeString(
                         variation
                       )}.html`
                     ),
@@ -571,12 +582,12 @@ module.exports = (app) => {
     }) {
       return new Promise((res, rej) => {
         const promises = [];
-        const normalizedFileName = helpers.normalizeString(dir);
+        const normalizedFileName = normalizeString(dir);
         const data =
           app.get("state").fileContents[
-            helpers.getDataPathFromTemplatePath(
+            getDataPathFromTemplatePath(
               app,
-              helpers.getFullPathFromShortPath(app, file)
+              getFullPathFromShortPath(app, file)
             )
           ];
 
@@ -669,7 +680,7 @@ module.exports = (app) => {
           let variations = [];
 
           if (data) {
-            const dataWithoutInternalKeys = helpers.removeInternalKeys(data);
+            const dataWithoutInternalKeys = removeInternalKeys(data);
 
             if (
               !data.$hidden &&

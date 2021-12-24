@@ -4,35 +4,19 @@
  * @module index
  */
 
-const { messages } = require("./config.json");
-const initRendering = require("./init/rendering");
-const log = require("./logger.js");
-const yargs = require("./init/args.js");
-const mockGenerator = require("./generator/mocks");
-const componentGenerator = require("./generator/component");
-const getConfig = require("./config.js");
-const { lint } = require("./cli");
-const {
+import { messages } from "./miyagi-config.js";
+import initRendering from "./init/rendering.js";
+import log from "./logger.js";
+import yargs from "./init/args.js";
+import mockGenerator from "./generator/mocks.js";
+import componentGenerator from "./generator/component.js";
+import getConfig from "./config.js";
+import { lint } from "./cli/index.js";
+import {
   updateConfigForRendererIfNecessary,
   updateConfigWithGuessedExtensionBasedOnEngine,
   updateConfigWithGuessedEngineAndExtensionBasedOnFiles,
-} = require("./helpers.js");
-
-/* preload rendering modules */
-require("./render/helpers.js");
-require("./render");
-require("./render/tests.json");
-require("./render/menu/classes.js");
-require("./render/menu/helpers.js");
-require("./render/menu/component.js");
-require("./render/menu/directory.js");
-require("./render/menu");
-require("./render/menu/list-item.js");
-require("./render/menu/list.js");
-require("./render/menu/menu-item.js");
-require("./render/menu/toggle.js");
-require("./render/menu/variation-link.js");
-require("./render/menu/variations.js");
+} from "./helpers.js";
 
 /**
  * Checks if miyagi was started with "mocks" command
@@ -114,7 +98,7 @@ function runMockGenerator(config, args) {
 async function initApi(config) {
   config = await updateConfigForRendererIfNecessary(config);
 
-  return await require("../api/app")(config);
+  return await import("../api/app.js")(config);
 }
 
 /**
@@ -147,11 +131,11 @@ async function updateConfigForComponentGeneratorIfNecessary(config, args) {
 /**
  * Requires the user config and initializes and calls correct modules based on command
  */
-module.exports = async function Miyagi(cmd) {
+export default async function Miyagi(cmd) {
   if (cmd === "api") {
     process.env.NODE_ENV = "development";
 
-    const config = getConfig();
+    const config = await getConfig();
 
     return await initApi(config);
   } else {
@@ -186,7 +170,7 @@ module.exports = async function Miyagi(cmd) {
         }
       }
 
-      const config = getConfig(args, isBuild, isComponentGenerator);
+      const config = await getConfig(args, isBuild, isComponentGenerator);
 
       if (isMockGenerator) {
         runMockGenerator(config, args);
@@ -200,4 +184,4 @@ module.exports = async function Miyagi(cmd) {
       process.exit(1);
     }
   }
-};
+}

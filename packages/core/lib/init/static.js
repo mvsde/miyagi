@@ -4,9 +4,13 @@
  * @module initStatic
  */
 
-const path = require("path");
-const express = require("express");
-const config = require("../config.json");
+import path from "path";
+import express from "express";
+import { fileURLToPath } from "url";
+import config from "../miyagi-config.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * @param {object} app - the express instance
@@ -117,7 +121,7 @@ function registerAssetFolder(app) {
   );
 }
 
-module.exports = function initStatic(app) {
+export default function initStatic(app) {
   registerThemeFavicon(app);
   registerThemeLogo(app);
   registerUserAssetFolder(app);
@@ -127,4 +131,4 @@ module.exports = function initStatic(app) {
   registerNodeModule(app, "socket.io/client-dist");
   registerNodeModule(app, "axe-core");
   registerAssetFolder(app);
-};
+}

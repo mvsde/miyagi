@@ -4,8 +4,8 @@ const helpersSrc = "../../../../lib/render/menu/helpers.js";
  * @param componentName
  * @param mock
  */
-function requireComponent(componentName, mock) {
-  const component = require(`../../../../lib/render/menu/${componentName}`);
+async function requireComponent(componentName, mock) {
+  let component = await import(`../../../../lib/render/menu/${componentName}`);
 
   if (mock) {
     component.render = jest.fn(() => `${componentName}Html`);
@@ -23,14 +23,14 @@ describe("lib/menu/elements/menu-item", () => {
   const app = "app";
   const id = "id";
 
-  test("calls listItem.render with the correct params", () => {
-    const menuItem = requireComponent("menu-item");
-    const listItem = requireComponent("list-item", true);
+  test("calls listItem.render with the correct params", async () => {
+    const renderMenuItem = await requireComponent("menu-item");
+    const renderListItem = await requireComponent("list-item", true);
     const dirObject = {};
 
-    menuItem.render(dirObject);
+    renderMenuItem.render(dirObject);
 
-    expect(listItem.render).toHaveBeenCalled();
+    expect(renderListItem.render).toHaveBeenCalled();
   });
 
   describe("with children", () => {
@@ -44,22 +44,29 @@ describe("lib/menu/elements/menu-item", () => {
       type,
     };
 
-    test("calls menu.render with the correct params", () => {
-      const menuItem = requireComponent("menu-item");
-      const menu = requireComponent("index", true);
+    test("calls renderMenu with the correct params", async () => {
+      const renderMenuItem = await requireComponent("menu-item");
+      const renderMenu = await requireComponent("index", true);
 
-      menuItem.render(directoryObject, request, app);
+      renderMenuItem.render(directoryObject, request, app);
 
-      expect(menu.render).toHaveBeenCalledWith(app, children, request, index);
+      expect(renderMenu.render).toHaveBeenCalledWith(
+        app,
+        children,
+        request,
+        index
+      );
     });
 
-    test("adds the menu html to the return value", () => {
-      const menuItem = requireComponent("menu-item");
+    test("adds the menu html to the return value", async () => {
+      const renderMenuItem = await requireComponent("menu-item");
 
-      requireComponent("index", true);
+      await requireComponent("index", true);
 
       expect(
-        menuItem.render(directoryObject, request, app).indexOf("indexHtml")
+        renderMenuItem
+          .render(directoryObject, request, app)
+          .indexOf("indexHtml")
       ).toBeGreaterThanOrEqual(0);
     });
   });
@@ -68,30 +75,32 @@ describe("lib/menu/elements/menu-item", () => {
     const request = "request";
     const directoryObject = {};
 
-    test("calls component.render with the correct params", () => {
+    test("calls component.render with the correct params", async () => {
       const helpers = require(helpersSrc);
-      const menuItem = requireComponent("menu-item");
-      const component = requireComponent("component", true);
+      const renderMenuItem = await requireComponent("menu-item");
+      const renderComponent = await requireComponent("component", true);
       helpers.directoryHasComponent = jest.fn(() => true);
 
-      menuItem.render(directoryObject, request, app);
+      renderMenuItem.render(directoryObject, request, app);
 
-      expect(component.render).toHaveBeenCalledWith(
+      expect(renderComponent.render).toHaveBeenCalledWith(
         app,
         directoryObject,
         request
       );
     });
 
-    test("adds the menuItem html to the return value", () => {
+    test("adds the menuItem html to the return value", async () => {
       const helpers = require(helpersSrc);
-      const menuItem = requireComponent("menu-item");
+      const renderMenuItem = await requireComponent("menu-item");
       helpers.directoryHasComponent = jest.fn(() => true);
 
-      requireComponent("component", true);
+      await requireComponent("component", true);
 
       expect(
-        menuItem.render(directoryObject, request, app).indexOf("componentHtml")
+        renderMenuItem
+          .render(directoryObject, request, app)
+          .indexOf("componentHtml")
       ).toBeGreaterThanOrEqual(0);
     });
   });
@@ -103,26 +112,28 @@ describe("lib/menu/elements/menu-item", () => {
 
     helpers.directoryHasComponent = jest.fn(() => false);
 
-    test("calls directory.render with the correct params", () => {
-      const menuItem = requireComponent("menu-item");
-      const directory = requireComponent("directory", true);
+    test("calls directory.render with the correct params", async () => {
+      const renderMenuItem = await requireComponent("menu-item");
+      const renderDirectory = await requireComponent("directory", true);
 
-      menuItem.render(directoryObject, request, app);
+      renderMenuItem.render(directoryObject, request, app);
 
-      expect(directory.render).toHaveBeenCalledWith(
+      expect(renderDirectory.render).toHaveBeenCalledWith(
         app,
         directoryObject,
         request
       );
     });
 
-    test("adds the menuItem html to the return value", () => {
-      const menuItem = requireComponent("menu-item");
+    test("adds the menuItem html to the return value", async () => {
+      const renderMenuItem = await requireComponent("menu-item");
 
-      requireComponent("directory", true);
+      await requireComponent("directory", true);
 
       expect(
-        menuItem.render(directoryObject, request, app).indexOf("directoryHtml")
+        renderMenuItem
+          .render(directoryObject, request, app)
+          .indexOf("directoryHtml")
       ).toBeGreaterThanOrEqual(0);
     });
   });

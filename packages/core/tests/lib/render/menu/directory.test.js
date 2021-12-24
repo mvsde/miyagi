@@ -1,5 +1,5 @@
-const deepMerge = require("deepmerge");
-const config = require("../../../../lib/config.json");
+import deepMerge from "deepmerge";
+import config from "../../../../lib/miyagi-config.js";
 
 const helpersSrc = "../../../../lib/render/menu/helpers.js";
 
@@ -7,8 +7,10 @@ const helpersSrc = "../../../../lib/render/menu/helpers.js";
  * @param componentName
  * @param mock
  */
-function requireComponent(componentName, mock) {
-  const component = require(`../../../../lib/render/menu/${componentName}`);
+async function requireComponent(componentName, mock) {
+  let component = await import(
+    `../../../../lib/render/menu/${componentName}.js`
+  );
 
   if (mock) {
     component.render = jest.fn(() => `${componentName}Html`);
@@ -47,8 +49,8 @@ describe("lib/menu/elements/directory", () => {
     })
   );
 
-  test("adds the component name with correct index to the html", () => {
-    const directory = requireComponent("directory");
+  test("adds the component name with correct index to the html", async () => {
+    const directory = await requireComponent("directory");
 
     expect(
       directory
@@ -61,9 +63,9 @@ describe("lib/menu/elements/directory", () => {
 
   describe("has directory as child and is not in the first level", () => {
     describe("when expanded", () => {
-      test("calls toggle.render with the correct params", () => {
-        const directory = requireComponent("directory");
-        const toggle = requireComponent("toggle", true);
+      test("calls toggle.render with the correct params", async () => {
+        const directory = await requireComponent("directory");
+        const toggle = await requireComponent("toggle", true);
         const helpers = require(helpersSrc);
 
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
@@ -82,9 +84,9 @@ describe("lib/menu/elements/directory", () => {
     });
 
     describe("when not expanded", () => {
-      test("calls toggle.render with the correct params", () => {
-        const directory = requireComponent("directory");
-        const toggle = requireComponent("toggle", true);
+      test("calls toggle.render with the correct params", async () => {
+        const directory = await requireComponent("directory");
+        const toggle = await requireComponent("toggle", true);
         const helpers = require(helpersSrc);
 
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
@@ -102,9 +104,9 @@ describe("lib/menu/elements/directory", () => {
       });
     });
 
-    test("adds the toggle html to the return value", () => {
-      const directory = requireComponent("directory");
-      requireComponent("toggle", true);
+    test("adds the toggle html to the return value", async () => {
+      const directory = await requireComponent("directory");
+      await requireComponent("toggle", true);
 
       const helpers = require(helpersSrc);
       helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);

@@ -14,8 +14,10 @@ const directory = {
  * @param componentName
  * @param mock
  */
-function requireComponent(componentName, mock) {
-  const component = require(`../../../../lib/render/menu/${componentName}`);
+async function requireComponent(componentName, mock) {
+  let component = await import(
+    `../../../../lib/render/menu/${componentName}.js`
+  );
 
   if (mock) {
     component.render = jest.fn(() => `${componentName}Html`);
@@ -45,9 +47,9 @@ describe("lib/menu/elements/component", () => {
     };
 
     describe("without requested variation", () => {
-      test("renders the link with active state", () => {
+      test("renders the link with active state", async () => {
         const helpers = require(helpersSrc);
-        const component = requireComponent("component");
+        const component = await requireComponent("component");
         helpers.activeState = "activeState";
 
         expect(
@@ -57,8 +59,8 @@ describe("lib/menu/elements/component", () => {
     });
 
     describe("with requested variation", () => {
-      test("renders the link without active state", () => {
-        const component = requireComponent("component");
+      test("renders the link without active state", async () => {
+        const component = await requireComponent("component");
 
         expect(
           component
@@ -78,8 +80,8 @@ describe("lib/menu/elements/component", () => {
       path: "foo/baz",
     };
 
-    test("renders the link without active state", () => {
-      const component = requireComponent("component");
+    test("renders the link without active state", async () => {
+      const component = await requireComponent("component");
 
       expect(
         component.render(app, directory, request).indexOf("activeState")
@@ -88,11 +90,11 @@ describe("lib/menu/elements/component", () => {
   });
 
   describe("with componentHasVariations being truthy", () => {
-    test("adds the toggle html to the return value", () => {
+    test("adds the toggle html to the return value", async () => {
       const helpers = require(helpersSrc);
-      const component = requireComponent("component");
-      requireComponent("variations", true);
-      requireComponent("toggle", true);
+      const component = await requireComponent("component");
+      await requireComponent("variations", true);
+      await requireComponent("toggle", true);
       helpers.componentHasVariations = jest.fn(() => true);
       helpers.childrenOfDirectoryContainDirectory = jest.fn(() => false);
 
@@ -102,18 +104,18 @@ describe("lib/menu/elements/component", () => {
     });
 
     describe("requested component is the current component", () => {
-      test("calls toggle.render with the correct params", () => {
+      test("calls toggle.render with the correct params", async () => {
         const helpers = require(helpersSrc);
-        const component = requireComponent("component");
-        const toggle = requireComponent("toggle", true);
-        requireComponent("variations", true);
+        const component = await requireComponent("component");
+        const renderToggle = await requireComponent("toggle", true);
+        await requireComponent("variations", true);
         helpers.componentHasVariations = jest.fn(() => true);
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => false);
         helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => true);
 
         component.render(app, directory, { path: directory.shortPath });
 
-        expect(toggle.render).toHaveBeenCalledWith(
+        expect(renderToggle.render).toHaveBeenCalledWith(
           `${directoryId}-variations`,
           true,
           directoryIndex
@@ -122,11 +124,11 @@ describe("lib/menu/elements/component", () => {
     });
 
     describe("requested component is not the current component", () => {
-      test("calls toggle.render with the correct params", () => {
+      test("calls toggle.render with the correct params", async () => {
         const helpers = require(helpersSrc);
-        const component = requireComponent("component");
-        const toggle = requireComponent("toggle", true);
-        requireComponent("variations", true);
+        const component = await requireComponent("component");
+        const renderToggle = await requireComponent("toggle", true);
+        await requireComponent("variations", true);
         helpers.componentHasVariations = jest.fn(() => true);
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => false);
         helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => false);
@@ -135,7 +137,7 @@ describe("lib/menu/elements/component", () => {
           path: directory.shortPath + "different-directory",
         });
 
-        expect(toggle.render).toHaveBeenCalledWith(
+        expect(renderToggle.render).toHaveBeenCalledWith(
           `${directoryId}-variations`,
           false,
           directoryIndex
@@ -145,11 +147,11 @@ describe("lib/menu/elements/component", () => {
   });
 
   describe("with childrenOfDirectoryContainDirectory being truthy", () => {
-    test("adds the toggle html to the return value", () => {
+    test("adds the toggle html to the return value", async () => {
       const helpers = require(helpersSrc);
-      const component = requireComponent("component");
-      requireComponent("toggle", true);
-      requireComponent("variations", true);
+      const component = await requireComponent("component");
+      await requireComponent("toggle", true);
+      await requireComponent("variations", true);
       helpers.componentHasVariations = jest.fn(() => false);
       helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
 
@@ -163,17 +165,17 @@ describe("lib/menu/elements/component", () => {
         path: directoryShortPath,
       };
 
-      test("calls toggle.render with the correct params", () => {
+      test("calls toggle.render with the correct params", async () => {
         const helpers = require(helpersSrc);
-        const component = requireComponent("component");
-        const toggle = requireComponent("toggle", true);
+        const component = await requireComponent("component");
+        const renderToggle = await requireComponent("toggle", true);
         helpers.componentHasVariations = jest.fn(() => false);
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
         helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => true);
 
         component.render(app, directory, request);
 
-        expect(toggle.render).toHaveBeenCalledWith(
+        expect(renderToggle.render).toHaveBeenCalledWith(
           `${directoryId}-variations`,
           true,
           directoryIndex
@@ -186,17 +188,17 @@ describe("lib/menu/elements/component", () => {
         path: "foo/baz",
       };
 
-      test("calls toggle.render with the correct params", () => {
+      test("calls toggle.render with the correct params", async () => {
         const helpers = require(helpersSrc);
-        const component = requireComponent("component");
-        const toggle = requireComponent("toggle", true);
+        const component = await requireComponent("component");
+        const renderToggle = await requireComponent("toggle", true);
         helpers.componentHasVariations = jest.fn(() => false);
         helpers.childrenOfDirectoryContainDirectory = jest.fn(() => true);
         helpers.pathIsParentOfOrEqualRequestedPath = jest.fn(() => false);
 
         component.render(app, directory, request);
 
-        expect(toggle.render).toHaveBeenCalledWith(
+        expect(renderToggle.render).toHaveBeenCalledWith(
           `${directoryId}-variations`,
           false,
           directoryIndex
@@ -206,22 +208,22 @@ describe("lib/menu/elements/component", () => {
   });
 
   describe("with componentHasVariations and childrenOfDirectoryContainDirectory being falsy", () => {
-    test("doesn't call toggle.render", () => {
+    test("doesn't call toggle.render", async () => {
       const helpers = require(helpersSrc);
-      const component = requireComponent("component");
-      const toggle = requireComponent("toggle", true);
+      const component = await requireComponent("component");
+      const renderToggle = await requireComponent("toggle", true);
       helpers.componentHasVariations = jest.fn(() => false);
       helpers.childrenOfDirectoryContainDirectory = jest.fn(() => false);
 
       component.render(app, {}, {});
 
-      expect(toggle.render).not.toHaveBeenCalled();
+      expect(renderToggle.render).not.toHaveBeenCalled();
     });
 
-    test("doesn't add the toggle html to the return value", () => {
+    test("doesn't add the toggle html to the return value", async () => {
       const helpers = require(helpersSrc);
-      const component = requireComponent("component");
-      requireComponent("toggle", true);
+      const component = await requireComponent("component");
+      await requireComponent("toggle", true);
       helpers.componentHasVariations = jest.fn(() => false);
       helpers.childrenOfDirectoryContainDirectory = jest.fn(() => false);
 

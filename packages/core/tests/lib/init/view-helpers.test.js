@@ -1,9 +1,8 @@
-const deepMerge = require("deepmerge");
-const express = require("express");
-const handlebars = require("handlebars");
-const viewHelpers = require("../../../lib/init/view-helpers.js");
-const menu = require("../../../lib/render/menu");
-const config = require("../../../lib/config.json");
+import deepMerge from "deepmerge";
+import express from "express";
+import handlebars from "handlebars";
+import viewHelpers from "../../../lib/init/view-helpers.js";
+import config from "../../../lib/miyagi-config.js";
 
 const { registerHelper } = handlebars;
 
@@ -113,7 +112,6 @@ describe("lib/init/view-helpers", () => {
 
     test("returns the result from render/menu/index", () => {
       handlebars.registerHelper = registerHelper;
-      menu.render = jest.fn(() => "menuHtml");
       viewHelpers(app);
 
       const template = handlebars.compile("{{#menu}}{{/menu}}");

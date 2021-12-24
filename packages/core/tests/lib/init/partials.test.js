@@ -1,9 +1,9 @@
-const express = require("express");
-const path = require("path");
-const handlebars = require("handlebars");
-const helpers = require("../../../lib/helpers.js");
-const log = require("../../../lib/logger.js");
-const partials = require("../../../lib/init/partials.js");
+import express from "express";
+import path from "path";
+import handlebars from "handlebars";
+import helpers from "../../../lib/helpers.js";
+import log from "../../../lib/logger.js";
+import partials from "../../../lib/init/partials.js";
 
 jest.mock("../../../lib/logger.js");
 jest.mock("handlebars", () => {

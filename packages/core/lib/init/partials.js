@@ -4,12 +4,16 @@
  * @module initPartials
  */
 
-const fs = require("fs");
-const path = require("path");
-const handlebars = require("handlebars");
-const log = require("../logger.js");
-const helpers = require("../helpers.js");
-const config = require("../config.json");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import handlebars from "handlebars";
+import log from "../logger.js";
+import { getShortPathFromFullPath } from "../helpers.js";
+import config, { messages } from "../miyagi-config.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * @param {string} shortPath - relative template file path based from components folder
@@ -18,23 +22,21 @@ const config = require("../config.json");
  */
 async function register(shortPath, fullFilePath) {
   return new Promise((resolve) => {
-    fs.readFile(fullFilePath, "utf8", function registerPartialCallback(
-      err,
-      data
-    ) {
-      if (typeof data === "string") {
-        handlebars.registerPartial(
-          shortPath,
-          handlebars.compile(data.toString())
-        );
-      } else {
-        log(
-          "warn",
-          config.messages.fileNotFound.replace("{{filePath}}", shortPath)
-        );
+    fs.readFile(
+      fullFilePath,
+      "utf8",
+      function registerPartialCallback(err, data) {
+        if (typeof data === "string") {
+          handlebars.registerPartial(
+            shortPath,
+            handlebars.compile(data.toString())
+          );
+        } else {
+          log("warn", messages.fileNotFound.replace("{{filePath}}", shortPath));
+        }
+        resolve();
       }
-      resolve();
-    });
+    );
   });
 }
 
@@ -84,9 +86,7 @@ async function registerComponents(app) {
  */
 async function registerPartial(app, fullPath) {
   return new Promise((resolve) => {
-    register(helpers.getShortPathFromFullPath(app, fullPath), fullPath).then(
-      resolve
-    );
+    register(getShortPathFromFullPath(app, fullPath), fullPath).then(resolve);
   });
 }
 
@@ -112,7 +112,7 @@ async function registerAll(app) {
   return Promise.all(promises);
 }
 
-module.exports = {
+export default {
   registerPartial,
   registerAll,
 };

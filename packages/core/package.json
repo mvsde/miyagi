@@ -12,6 +12,7 @@
     "url": "git@github.com:mgrsskls/miyagi.git",
     "directory": "packages/core"
   },
+  "type": "module",
   "keywords": [
     "components",
     "pattern",
@@ -98,7 +99,12 @@
       "lib/**/*.js",
       "index.js"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "transform": {
+      "\\.js$": [
+        "babel-jest"
+      ]
+    }
   },
   "babel": {
     "presets": [

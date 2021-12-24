@@ -1,16 +1,15 @@
-const handlebars = require("handlebars");
-const handlebarsLayouts = require("handlebars-layouts");
-const appConfig = require("../../../lib/config.json");
-const log = require("../../../lib/logger.js");
-const setEngines = require("../../../lib/init/engines.js");
-const setPartials = require("../../../lib/init/partials.js");
-const setRouter = require("../../../lib/init/router.js");
-const setState = require("../../../lib/state");
-const setStatic = require("../../../lib/init/static.js");
-const setViewHelpers = require("../../../lib/init/view-helpers.js");
-const setViews = require("../../../lib/init/views.js");
-const init = require("../../../lib/init");
-require("../../../lib/init/watcher.js");
+import handlebars from "handlebars";
+import handlebarsLayouts from "handlebars-layouts";
+import appConfig from "../../../lib/miyagi-config.js";
+import log from "../../../lib/logger.js";
+import setEngines from "../../../lib/init/engines.js";
+import setPartials from "../../../lib/init/partials.js";
+import setRouter from "../../../lib/init/router.js";
+import setState from "../../../lib/state/index.js";
+import setStatic from "../../../lib/init/static.js";
+import setViewHelpers from "../../../lib/init/view-helpers.js";
+import setViews from "../../../lib/init/views.js";
+import init from "../../../lib/init/index.js";
 
 appConfig.defaultPort += 1;
 
@@ -27,9 +26,6 @@ jest.mock("../../../lib/state");
 jest.mock("handlebars");
 jest.mock("handlebars-layouts");
 
-/**
- *
- */
 function getRandomPort() {
   return Math.floor(Math.random() * (65536 + 1));
 }
