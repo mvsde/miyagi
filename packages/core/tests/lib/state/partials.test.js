@@ -6,7 +6,7 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-describe.skip("lib/state/partials", () => {
+describe("lib/state/partials", () => {
   const app = require("express")();
   app.set(
     "config",

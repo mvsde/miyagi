@@ -84,7 +84,7 @@ describe("lib/state/menu/data", () => {
           );
 
           expect(result).toEqual({});
-          expect(log).toHaveBeenCalled();
+          expect(log.default).toHaveBeenCalled();
         });
       });
     });
@@ -109,7 +109,7 @@ describe("lib/state/menu/data", () => {
         );
 
         expect(result).toEqual({});
-        expect(log).toHaveBeenCalled();
+        expect(log.default).toHaveBeenCalled();
       });
     });
   });

@@ -1,50 +1,62 @@
 import express from "express";
-import { getPartials } from "../../../lib/state/partials.js";
-import { getFileContents } from "../../../lib/state/file-contents.js";
-import { getMenu } from "../../../lib/state/menu/index.js";
-import { getSourceTree } from "../../../lib/state/source-tree.js";
-import setState from "../../../lib/state/index.js";
 import config from "../../../lib/miyagi-config.js";
 
-jest.mock("../../../lib/state/partials.js", () => {
+async function mock() {
+  jest.doMock("../../../lib/state/partials.js", () => {
+    return {
+      __esModule: true,
+      getPartials: jest.fn(() => {
+        return new Promise((resolve) => resolve([]));
+      }),
+    };
+  });
+  jest.doMock("../../../lib/state/file-contents.js", () => {
+    return {
+      __esModule: true,
+      getFileContents: jest.fn(() => {
+        return new Promise((resolve) => resolve("data"));
+      }),
+    };
+  });
+  jest.doMock("../../../lib/state/menu/index.js", () => {
+    return {
+      __esModule: true,
+      getMenu: jest.fn(() => {
+        return "menu";
+      }),
+    };
+  });
+  jest.doMock("../../../lib/state/flat-menu.js", () => {
+    return {
+      __esModule: true,
+      default: jest.fn(() => {
+        return [];
+      }),
+    };
+  });
+  jest.doMock("../../../lib/state/source-tree.js", () => {
+    return {
+      __esModule: true,
+      getSourceTree: jest.fn(() => {
+        return "sourceTree";
+      }),
+    };
+  });
+
+  const { getPartials } = await import("../../../lib/state/partials.js");
+  const { getFileContents } = await import(
+    "../../../lib/state/file-contents.js"
+  );
+  const { getMenu } = await import("../../../lib/state/menu/index.js");
+  const { getSourceTree } = await import("../../../lib/state/source-tree.js");
+
   return {
-    __esModule: true,
-    getPartials: jest.fn(() => {
-      return new Promise((resolve) => resolve([]));
-    }),
+    getPartials,
+    getFileContents,
+    getMenu,
+    getSourceTree,
   };
-});
-jest.mock("../../../lib/state/file-contents.js", () => {
-  return {
-    getFileContents: jest.fn(() => {
-      return new Promise((resolve) => resolve("data"));
-    }),
-  };
-});
-jest.mock("../../../lib/state/menu/index.js", () => {
-  return {
-    __esModule: true,
-    getMenu: jest.fn(() => {
-      return "menu";
-    }),
-  };
-});
-jest.mock("../../../lib/state/flat-menu.js", () => {
-  return {
-    __esModule: true,
-    default: jest.fn(() => {
-      return [];
-    }),
-  };
-});
-jest.mock("../../../lib/state/source-tree.js", () => {
-  return {
-    __esModule: true,
-    getSourceTree: jest.fn(() => {
-      return "sourceTree";
-    }),
-  };
-});
+}
 
 afterEach(() => {
   jest.resetModules();
@@ -55,6 +67,11 @@ describe("lib/state/index", () => {
   describe("with data=false, menu=false, sourceTree=false, partials=false", () => {
     test("calls nothing", async () => {
       const app = express();
+
+      const { getPartials, getFileContents, getMenu, getSourceTree } =
+        await mock();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -63,7 +80,7 @@ describe("lib/state/index", () => {
         },
       });
 
-      await setState(app, {});
+      await setState.default(app, {});
 
       expect(getPartials).not.toHaveBeenCalled();
       expect(getFileContents).not.toHaveBeenCalled();
@@ -74,13 +91,15 @@ describe("lib/state/index", () => {
     describe("no state set yet", () => {
       test("sets the state to {}", async () => {
         const app = express();
+        const setState = await import("../../../lib/state/index.js");
+
         app.set("config", {
           ...config.defaultUserConfig,
           folder: "srcFolder",
           ignores: [],
         });
 
-        await setState(app, {});
+        await setState.default(app, {});
 
         expect(app.get("state")).toEqual({});
       });
@@ -89,6 +108,8 @@ describe("lib/state/index", () => {
     describe(" state already set set", () => {
       test("returns that state", async () => {
         const app = express();
+        const setState = await import("../../../lib/state/index.js");
+
         app.set("config", {
           ...config.defaultUserConfig,
           folder: "srcFolder",
@@ -98,7 +119,7 @@ describe("lib/state/index", () => {
           foo: "bar",
         });
 
-        await setState(app, {});
+        await setState.default(app, {});
 
         expect(app.get("state")).toEqual({
           foo: "bar",
@@ -110,6 +131,9 @@ describe("lib/state/index", () => {
   describe("with sourceTree=true", () => {
     test("calls nothing", async () => {
       const app = express();
+      const { getSourceTree } = await mock();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -118,7 +142,7 @@ describe("lib/state/index", () => {
         },
       });
 
-      await setState(app, {
+      await setState.default(app, {
         sourceTree: true,
       });
 
@@ -129,6 +153,9 @@ describe("lib/state/index", () => {
   describe("with partials=true", () => {
     test("calls getPartials", async () => {
       const app = express();
+      const { getPartials } = await mock();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -137,7 +164,7 @@ describe("lib/state/index", () => {
         },
       });
 
-      await setState(app, {
+      await setState.default(app, {
         partials: true,
       });
 
@@ -148,6 +175,9 @@ describe("lib/state/index", () => {
   describe("with menu=true", () => {
     test("calls getMenu", async () => {
       const app = express();
+      const { getMenu } = await mock();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -156,7 +186,7 @@ describe("lib/state/index", () => {
         },
       });
 
-      await setState(app, {
+      await setState.default(app, {
         menu: true,
       });
 
@@ -168,13 +198,16 @@ describe("lib/state/index", () => {
     describe("with data=true", () => {
       test("calls getFileContents", async () => {
         const app = express();
+        const { getFileContents } = await mock();
+        const setState = await import("../../../lib/state/index.js");
+
         app.set("config", {
           ...config.defaultUserConfig,
           folder: "srcFolder",
           ignores: [],
         });
 
-        await setState(app, {
+        await setState.default(app, {
           fileContents: true,
         });
 
@@ -185,13 +218,16 @@ describe("lib/state/index", () => {
     describe("with data being an object", () => {
       test("calls nothing", async () => {
         const app = express();
+        const { getFileContents } = await mock();
+        const setState = await import("../../../lib/state/index.js");
+
         app.set("config", {
           ...config.defaultUserConfig,
           folder: "srcFolder",
           ignores: [],
         });
 
-        await setState(app, {
+        await setState.default(app, {
           fileContents: {},
         });
 
@@ -203,6 +239,9 @@ describe("lib/state/index", () => {
   describe("with sourceTree=true", () => {
     test("calls getSourceTree after getFileContents", async () => {
       const app = express();
+      const { getFileContents, getSourceTree } = await mock();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -211,7 +250,7 @@ describe("lib/state/index", () => {
         },
       });
 
-      await setState(app, {
+      await setState.default(app, {
         fileContents: true,
         sourceTree: true,
       });
@@ -224,6 +263,8 @@ describe("lib/state/index", () => {
   describe("with data=true, sourceTree=true", () => {
     test("sets app.state after getFileContents and getSourceTree", async () => {
       const app = express();
+      const setState = await import("../../../lib/state/index.js");
+
       app.set("config", {
         ...config.defaultUserConfig,
         components: {
@@ -233,7 +274,7 @@ describe("lib/state/index", () => {
       });
       const spy = jest.spyOn(app, "set");
 
-      await setState(app, {
+      await setState.default(app, {
         fileContents: true,
         sourceTree: true,
       });
@@ -247,6 +288,9 @@ describe("lib/state/index", () => {
     describe("with menu=true", () => {
       test("calls getMenu after setting app.state", async () => {
         const app = express();
+        const { getFileContents, getSourceTree, getMenu } = await mock();
+        const setState = await import("../../../lib/state/index.js");
+
         app.set("config", {
           ...config.defaultUserConfig,
           folder: "srcFolder",
@@ -254,7 +298,7 @@ describe("lib/state/index", () => {
         });
         const spy = jest.spyOn(app, "set");
 
-        await setState(app, {
+        await setState.default(app, {
           fileContents: true,
           sourceTree: true,
           menu: true,

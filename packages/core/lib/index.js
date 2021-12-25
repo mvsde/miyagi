@@ -177,7 +177,7 @@ export default async function Miyagi(cmd) {
       } else if (isComponentGenerator) {
         runComponentGenerator(config, args);
       } else {
-        return initRendering(config);
+        return await initRendering(config);
       }
     } else {
       log("error", messages.commandNotFound);

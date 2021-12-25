@@ -6,7 +6,6 @@ import config from "../../../lib/miyagi-config.js";
 import build from "../../../lib/build";
 import render from "../../../lib/render/index";
 
-jest.mock("../../../lib/__dirname.js", () => `${process.cwd()}/lib`);
 jest.mock("../../../lib/logger");
 
 jest.mock("fs", () => ({
@@ -67,7 +66,7 @@ describe("lib/build/index", () => {
       },
       assets: {
         css: ["index.css"],
-        js: ["index.js"],
+        js: [{ src: "index.js" }],
       },
       theme: {
         mode: "light",
@@ -99,9 +98,7 @@ describe("lib/build/index", () => {
       expect(typeof fs.rm.mock.calls[0][2]).toEqual("function");
 
       // buildDistDirectory
-      expect(fs.cp.mock.calls[0][0]).toEqual(
-        path.join(__dirname, "../../../dist/")
-      );
+      expect(fs.cp.mock.calls[0][0]).toEqual("../../dist/");
       expect(fs.cp.mock.calls[0][1]).toEqual("buildFolder/miyagi/");
       expect(fs.cp.mock.calls[0][2]).toEqual({ recursive: true });
       expect(typeof fs.cp.mock.calls[0][3]).toEqual("function");

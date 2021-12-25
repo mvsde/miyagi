@@ -377,7 +377,6 @@ export const updateConfigWithGuessedExtensionBasedOnEngine = function (config) {
  * @returns {object|boolean} is either the updated config or false if guessing failed
  */
 export const updateConfigWithGuessedEngineBasedOnExtension = function (config) {
-  console.log(2);
   log("info", messages.tryingToGuessEngineBasedOnExtension);
 
   const guessedEngine = guessEngineFromExtension(
@@ -386,7 +385,6 @@ export const updateConfigWithGuessedEngineBasedOnExtension = function (config) {
 
   if (guessedEngine) {
     config.engine.name = guessedEngine.engine;
-    console.log(3);
     log(
       "warn",
       messages.engineGuessedBasedOnExtension.replace(

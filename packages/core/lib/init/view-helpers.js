@@ -61,6 +61,7 @@ export default function initViewHelpers(app) {
 
   handlebars.registerHelper("menu", getMenuHtml.bind(app));
   handlebars.registerHelper("cssFiles", getCssFilesHtml.call(null, assets.css));
+
   handlebars.registerHelper(
     "jsFilesHead",
     getJsFilesHtml.call(
